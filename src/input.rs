@@ -1,4 +1,6 @@
 
+//! Mouse and keyboard ops
+
 use std::{
     sync::{mpsc, atomic::{AtomicBool, Ordering}},
     time::Duration
@@ -12,6 +14,7 @@ use winput::{
 
 use crate::api::Coord;
 
+/// Event loop to monitor mouse and keyboard events
 pub fn event_loop(tx: mpsc::Sender<EventLoopMessage>, should_exit: &AtomicBool) -> Result<(), MessageLoopError> {
     let receiver = winput::message_loop::start()?;
 
@@ -26,7 +29,7 @@ pub fn event_loop(tx: mpsc::Sender<EventLoopMessage>, should_exit: &AtomicBool) 
                     button: Button::Left
                 } => {
                     if let Ok((x, y)) = winput::Mouse::position() {
-                        let _ = tx.send(EventLoopMessage::MouseButtonClicked(x, y));
+                        let _ = tx.send(EventLoopMessage::MouseButtonClicked(Coord::new(x, y)));
                     }
                 }
                 _ => ()
@@ -60,7 +63,10 @@ pub fn click_pos_and_return(pos: Coord<i32>) {
     }
 }
 
+/// Messages returned from the event loop
+#[derive(Debug)]
 pub enum EventLoopMessage {
-    MouseButtonClicked(i32, i32),
+    /// Left mouse button clicked at coordinate
+    MouseButtonClicked(Coord<i32>),
     
 }

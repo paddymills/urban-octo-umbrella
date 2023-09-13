@@ -1,0 +1,5 @@
+[alias]
+d = "doc --no-deps --all-features --workspace"
+
+[build]
+rustdocflags = ["--allow", "unused"]

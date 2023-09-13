@@ -1,4 +1,6 @@
 
+//! CO02: Delete an operation from an order
+
 use std::error::Error;
 
 use winput::Vk;
@@ -8,7 +10,8 @@ use crate::{
     input
 };
 
-pub fn delete_matlcons(order: u32) -> Result<(), Box<dyn Error>> {
+/// delete the `MATLCONS` operation
+pub fn delete_matlcons(_order: u32) -> Result<(), Box<dyn Error>> {
     let _ops = vec![
         Operation::new(
             vec![],

@@ -1,13 +1,20 @@
 
+//! 2d Coordinate struct
+
+use serde::{Serialize, Deserialize};
 use std::ops::Sub;
 
-#[derive(Debug, Serialize, Deserialize)]
+/// 2d Coordinate
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct Coord<T> {
+    /// x-axis value
     pub x: T,
+    /// y-axis value
     pub y: T,
 }
 
 impl<T> Coord<T> {
+    /// constructs a new `Coord`
     pub fn new(x: T, y: T) -> Self {
         Self { x, y }
     }
