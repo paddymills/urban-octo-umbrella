@@ -7,7 +7,7 @@ use std::error::Error;
 use std::path::PathBuf;
 
 /// the format used for screen capture images
-pub(crate) type ImageFormat = image::RgbaImage;
+pub type ImageFormat = image::RgbaImage;
 
 /// A named image derived from a captured screen region
 #[derive(Debug)]
