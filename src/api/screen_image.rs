@@ -12,7 +12,8 @@ pub type ImageFormat = image::RgbaImage;
 /// A named image derived from a captured screen region
 #[derive(Debug)]
 pub struct ScreenImage {
-    name: String,
+    /// Name/id
+    pub name: String,
     origin: Coord<i32>,
     img: ImageFormat
 }

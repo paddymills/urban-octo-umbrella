@@ -78,6 +78,11 @@ impl ImageCache {
             None => Err(format!("No image named `{}` in cache found", key))
         }
     }
+
+    /// adds an image to the cache
+    pub fn add(&mut self, image: ScreenImage) {
+        self.0.insert(image.name.clone(), LazyLoadedImage::Loaded(image));
+    }
 }
 
 
