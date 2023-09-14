@@ -3,7 +3,7 @@
 
 // file imports
 mod coord;
-mod image_cache;
+mod cache;
 mod operation;
 mod screen_image;
 
@@ -11,4 +11,4 @@ mod screen_image;
 pub use coord::Coord;
 pub use operation::Operation;
 pub use screen_image::{ScreenImage, ImageFormat};
-pub use image_cache::ImageCache;
+pub use cache::ImageCache;

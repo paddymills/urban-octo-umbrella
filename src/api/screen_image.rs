@@ -10,11 +10,12 @@ use std::path::PathBuf;
 pub type ImageFormat = image::RgbaImage;
 
 /// A named image derived from a captured screen region
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ScreenImage {
     /// Name/id
     pub name: String,
-    origin: Coord<i32>,
+    /// origin coordinates
+    pub origin: Coord<i32>,
     img: ImageFormat
 }
 
@@ -54,7 +55,7 @@ impl ScreenImage {
     }
 
     /// Save the image to the cached images folder
-    pub fn save(self) -> Result<(), Box<dyn Error>> {
+    pub fn save(&self) -> Result<(), Box<dyn Error>> {
         let path = Self::cached_img_path(&self.name);
 
         self.img.save(path)?;

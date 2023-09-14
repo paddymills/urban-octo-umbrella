@@ -1,42 +1,11 @@
 
-use super::{Coord, ScreenImage};
-use serde::{Serialize, Deserialize};
+use super::{ScreenImage, LazyLoadedImage};
+use super::cached_image::CachedImageData;
 use std::{
     collections::HashMap,
     path::PathBuf
 };
 
-/// data for a cached image
-#[derive(Debug, Serialize, Deserialize)]
-struct CachedImageData {
-    /// name/id of the image
-    name: String,
-
-    /// origin coordinates of the image
-    origin: Coord<i32>,
-}
-
-#[derive(Debug)]
-enum LazyLoadedImage {
-    Unloaded(CachedImageData),
-    Loaded(ScreenImage)
-}
-
-impl LazyLoadedImage {
-    /// Gets the internal `ScreenImage`, loading the image if it was not loaded
-    fn get(&mut self) -> &ScreenImage {
-        match self {
-            Self::Loaded(img) => img,
-            Self::Unloaded(data) => {
-                let origin = std::mem::take(&mut data.origin);
-                let img = ScreenImage::load(&data.name, origin);
-                let _ = std::mem::replace(self, Self::Loaded(img));
-
-                self.get()
-            }
-        }
-    }
-}
 
 /// Cached image store
 #[derive(Debug, Default)]
@@ -50,8 +19,7 @@ impl ImageCache {
 
     /// loads the image cache from its config file
     pub fn load() -> Self {
-        let mut cache_toml = PathBuf::from(crate::CACHE_DIR);
-        cache_toml.push("config.toml");
+        let cache_toml = Self::config_file();
 
         let toml_text = std::fs::read_to_string(cache_toml)
             .expect("Failed to read cache config file");
@@ -69,6 +37,15 @@ impl ImageCache {
         Self ( images )
     }
 
+    /// save image cache to disk
+    pub fn save(&mut self) {
+        let toml_text = toml::to_string(&self.0)
+            .expect("failed to serialize image cache config");
+
+        std::fs::write(Self::config_file(), toml_text)
+            .expect("failed to write cache config to file");
+    }
+
     /// gets a `ScreenImage` from the cache
     /// 
     /// this will load the image if it was never loaded before
@@ -81,7 +58,17 @@ impl ImageCache {
 
     /// adds an image to the cache
     pub fn add(&mut self, image: ScreenImage) {
+        image.save()
+            .expect(&format!("failed to save image {}", &image.name));
+        
         self.0.insert(image.name.clone(), LazyLoadedImage::Loaded(image));
+    }
+
+    fn config_file() -> PathBuf {
+        let mut cache_toml = PathBuf::from(crate::CACHE_DIR);
+        cache_toml.push("config.toml");
+
+        cache_toml
     }
 }
 

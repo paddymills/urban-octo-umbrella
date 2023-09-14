@@ -5,7 +5,7 @@ use serde::{Serialize, Deserialize};
 use std::ops::Sub;
 
 /// 2d Coordinate
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Default, Serialize, Deserialize, Clone, Copy)]
 pub struct Coord<T> {
     /// x-axis value
     pub x: T,
