@@ -4,12 +4,12 @@ use serde::{Serialize, Deserialize};
 
 /// data for a cached image
 #[derive(Debug, Serialize, Deserialize)]
-pub struct CachedImageData {
+pub(crate) struct CachedImageData {
     /// name/id of the image
-    pub name: String,
+    pub(crate) name: String,
 
     /// origin coordinates of the image
-    pub origin: Coord<i32>,
+    pub(crate) origin: Coord<i32>,
 }
 
 impl From<&ScreenImage> for CachedImageData {
