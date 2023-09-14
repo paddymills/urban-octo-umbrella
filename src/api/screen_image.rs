@@ -92,7 +92,7 @@ impl ScreenImage {
     fn cached_img_path(name: &str) -> PathBuf {
         let mut path = PathBuf::from(crate::CACHE_DIR);
         path.push(name);
-        path.set_extension(".png");
+        path.set_extension("png");
 
         path
     }
