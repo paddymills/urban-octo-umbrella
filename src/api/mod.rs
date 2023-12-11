@@ -9,6 +9,6 @@ mod screen_image;
 
 // module exports
 pub use coord::Coord;
-pub use operation::Operation;
+pub use operation::{Operation, Predicate};
 pub use screen_image::{ScreenImage, ImageFormat};
-pub use cache::ImageCache;
+pub use cache::{ImageCache, IMAGE_CACHE};

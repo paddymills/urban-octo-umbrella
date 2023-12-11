@@ -14,6 +14,13 @@
 /// name of the folder where images are cached
 pub const CACHE_DIR: &str = "cache";
 
+mod director;
+
 pub mod api;
+pub mod cli;
 pub mod input;
+pub mod overlay;
 pub mod processes;
+pub mod transact;
+
+pub use director::PredicateDirector;

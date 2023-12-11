@@ -1,0 +1,6 @@
+[test_img]
+name = "test_img"
+
+[test_img.origin]
+x = 10
+y = 10

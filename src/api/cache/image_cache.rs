@@ -1,4 +1,6 @@
 
+use crate::transact::TransAct;
+
 use super::{ScreenImage, LazyLoadedImage};
 use super::cached_image::CachedImageData;
 use std::{
@@ -19,22 +21,24 @@ impl ImageCache {
 
     /// loads the image cache from its config file
     pub fn load() -> Self {
-        let cache_toml = Self::config_file();
+        if Self::config_file().exists() {
+            let toml_text = std::fs::read_to_string(Self::config_file())
+                .expect("Failed to read cache config file");
+    
+            // let metadata: HashMap<String, CachedImageData> = toml::from_str(&toml_text)
+            //     .expect("Failed to parse cache config toml file");
+            let mut images = HashMap::new();
+            toml::from_str::<HashMap<String, CachedImageData>>(&toml_text)
+                .expect("Failed to parse cache config toml file")
+                .into_iter()
+                .for_each(|(k, v)| {
+                    images.insert(k, LazyLoadedImage::Unloaded(v) );
+                });
 
-        let toml_text = std::fs::read_to_string(cache_toml)
-            .expect("Failed to read cache config file");
+            return Self ( images );
+        }
 
-        // let metadata: HashMap<String, CachedImageData> = toml::from_str(&toml_text)
-        //     .expect("Failed to parse cache config toml file");
-        let mut images = HashMap::new();
-        toml::from_str::<HashMap<String, CachedImageData>>(&toml_text)
-            .expect("Failed to parse cache config toml file")
-            .into_iter()
-            .for_each(|(k, v)| {
-                images.insert(k, LazyLoadedImage::Unloaded(v) );
-            });
-        
-        Self ( images )
+        Self::new()
     }
 
     /// save image cache to disk
@@ -51,6 +55,18 @@ impl ImageCache {
     /// this will load the image if it was never loaded before
     pub fn get(&mut self, key: &str) -> Result<&ScreenImage, String> {
         match self.0.get_mut(key) {
+            Some(img) => Ok(&img.get()),
+            None => Err(format!("No image named `{}` in cache found", key))
+        }
+    }
+
+    /// gets a `ScreenImage` from the cache
+    /// 
+    /// this will load the image if it was never loaded before
+    pub fn get_for_transact(&mut self, transact: TransAct, name: &str) -> Result<&ScreenImage, String> {
+        let key = format!("{}_{}", transact, name);
+
+        match self.0.get_mut(&key) {
             Some(img) => Ok(&img.get()),
             None => Err(format!("No image named `{}` in cache found", key))
         }
